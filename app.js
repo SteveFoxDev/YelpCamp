@@ -12,15 +12,15 @@ var express       = require('express'),
     methodOverride = require('method-override'),
     mongoose      = require('mongoose');     // Database API
 
+const PORT = process.env.port || 3000;
+
 var commentRoutes     = require("./routes/comments"),
     userRoutes        = require("./routes/user"),
     forgotRoutes      = require("./routes/forgot"),
     campgroundRoutes  = require("./routes/campgrounds"),
     authRoutes        = require("./routes/index");
 
-// "mongodb://localhost/yelp_camp_v13"
-
-mongoose.connect("mongodb+srv://steveFoxDev:2602NBBC0517@yelpcamp-am5b2.mongodb.net/test?retryWrites=true&w=majority", {
+mongoose.connect(process.env.DATABASEURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false
@@ -68,6 +68,6 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 // ===========================================
 // ------------- Listen ----------------------
 // ===========================================
-app.listen(3000, function() {
+app.listen(PORT, function() {
   console.log("Yelp Camp App Server Started!");
 });
