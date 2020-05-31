@@ -12,7 +12,7 @@ var express       = require('express'),
     methodOverride = require('method-override'),
     mongoose      = require('mongoose');     // Database API
 
-const PORT = process.env.port || 3000;
+const PORT = process.env.PORT || 3000;
 
 var commentRoutes     = require("./routes/comments"),
     userRoutes        = require("./routes/user"),
