@@ -1,0 +1,37 @@
+.thumbnail img {
+  width: 100%;
+}
+
+.thumbnail {
+  padding: 0;
+}
+
+.thumbnail .caption-full {
+  padding: 9px;
+}
+
+.delete-form {
+  display: inline;
+}
+
+.myForm-h1 {
+  text-align: center;
+}
+
+.myForm-div {
+  width: 45%;
+  margin: 25px auto;
+}
+
+.allCamps {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#map {
+  height: 400px;
+  width: 100%;
+}
+ul {
+  list-style: none;
+}
