@@ -21,16 +21,36 @@ var geocoder = NodeGeocoder(options);
 
 // INDEX Route - List all campgrounds
 router.get("/", function(req, res){
-  //Get all campgrounds from DB
-  Campground.find({}, function(err, allCampgrounds){
-    if(err){
-      req.flash("error", "Something went wrong");
-      res.redirect("back");
-    } else {
-      res.render("campgrounds/index",
-        {campgrounds:allCampgrounds, page: 'campgrounds'});
-    }
-  });
+  var noMatch = null;
+  // if search query then return search results, else get All
+  if(req.query.search) {
+    const regex = new RegExp(escapeRegexp(req.query.search), 'gi');
+    // find search query in DB
+    Campground.find({name: regex}, function(err, searchedCampgrounds){
+      if(err){
+        req.flash("error", "Something went wrong");
+        res.redirect("back");
+      } else {
+          if(searchedCampgrounds.length < 1){
+            noMatch = "We're Sorry, we can't find any Campgrounds!";
+          }
+          res.render("campgrounds/index",
+            {campgrounds:searchedCampgrounds, page: 'campgrounds', noMatch:noMatch});
+
+      }
+    });
+  } else {
+    //Get all campgrounds from DB
+    Campground.find({}, function(err, allCampgrounds){
+      if(err){
+        req.flash("error", "Something went wrong");
+        res.redirect("back");
+      } else {
+        res.render("campgrounds/index",
+          {campgrounds:allCampgrounds, page: 'campgrounds', noMatch:noMatch});
+      }
+    });
+  }
 });
 
 // NEW Route- show form to create new campground
@@ -166,5 +186,9 @@ router.delete("/:id", middlewareObj.checkCampgroundOwnership,
         }
     });
 });
+
+function escapeRegexp(text){
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 module.exports = router;
