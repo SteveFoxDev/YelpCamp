@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Campground = require('./models/campground');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
+const catchAsync = require('./utilities/catchAsync');
+const ExpressError = require('./utilities/ExpressError');
 
 // ========== Mongoose Connection ==========
 // =========================================
@@ -36,10 +38,10 @@ app.get('/',  (req, res, next) => {
 });
 
 // Index
-app.get('/campgrounds', async (req, res, next) => {
+app.get('/campgrounds', catchAsync(async (req, res, next) => {
     const campgrounds = await Campground.find();
     res.render('campgrounds/index', {campgrounds});
-});
+}));
 
 // New
 app.get('/campgrounds/new',  (req, res, next) => {
@@ -47,43 +49,57 @@ app.get('/campgrounds/new',  (req, res, next) => {
 });
 
 // Create
-app.post('/campgrounds', async (req, res, next) => {
+app.post('/campgrounds', catchAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
-});
+}));
 
 // Show
-app.get('/campgrounds/:id', async (req, res, next) => {
+app.get('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', {campground});
-});
+}));
 
 // Edit
-app.get('/campgrounds/:id/edit', async (req, res, next) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit', {campground});
-});
+}));
 
 // Update
-app.put('/campgrounds/:id', async (req, res, next) => {
+app.put('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndUpdate(id, {...req.body.campground});
     res.redirect(`/campgrounds/${id}`);
-});
+}));
 
 // Delete Show
-app.get('/campgrounds/:id/delete', async (req, res, next) => {
+app.get('/campgrounds/:id/delete', catchAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/delete', {campground});
-});
+}));
 
 // Delete
-app.delete('/campgrounds/:id', async (req, res, next) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
+}));
+
+// ========== ERROR HANDLER ==========
+// ===================================
+app.all('*', (req, res, next) => {
+    next(new ExpressError('Page Not Found', 404));
 });
+
+app.use((err, req, res, next) => {
+    const { statusCode = 500 } = err;
+    if(!err.message) err.message = 'Something Went Wrong';
+    res.status(statusCode).send(err.message);
+    // res.status(statusCode).render('error', { err });
+});
+
 // ========== SERVER ==========
 // ============================
 app.listen(3000, ()=> {
