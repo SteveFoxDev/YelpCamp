@@ -8,6 +8,7 @@ const ejsMate = require('ejs-mate');  // Allows Partial EJS Templates
 const { campgroundSchema, reviewSchema } = require('./joiSchemas');  // Joi validation Middleware
 const catchAsync = require('./utilities/catchAsync');  // Error Catcher for Async Routes
 const ExpressError = require('./utilities/ExpressError');  // Extends Express Error Class
+const campgrounds = require('./routes/campgrounds');
 
 // ========== Mongoose Connection ==========
 // =========================================
@@ -34,16 +35,7 @@ app.use(methodOverride('_method'));
 
 // ========== MIDDLEWARE ==========
 // ================================
-const validateCampground = (req, res, next) => {
-    
-    const {error} = campgroundSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-}
+
 
 const validateReview = (req, res, next) => {
     const {error} = reviewSchema.validate(req.body);
@@ -64,55 +56,7 @@ app.get('/',  (req, res, next) => {
 });
 
 // <<< -------------------- Campground Routes ----------------------- >>>
-// Index
-app.get('/campgrounds', catchAsync(async (req, res, next) => {
-    const campgrounds = await Campground.find();
-    res.render('campgrounds/index', {campgrounds});
-}));
-
-// New
-app.get('/campgrounds/new',  (req, res, next) => {
-    res.render('campgrounds/new');
-});
-
-// Create
-app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-}));
-
-// Show
-app.get('/campgrounds/:id', catchAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews');
-    res.render('campgrounds/show', {campground});
-}));
-
-// Edit
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render('campgrounds/edit', {campground});
-}));
-
-// Update
-app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    await Campground.findByIdAndUpdate(id, {...req.body.campground});
-    res.redirect(`/campgrounds/${id}`);
-}));
-
-// Delete Show
-app.get('/campgrounds/:id/delete', catchAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render('campgrounds/delete', {campground});
-}));
-
-// Delete
-app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect('/campgrounds');
-}));
+app.use('/campgrounds', campgrounds)
 
 // <<< -------------------- Review Routes ----------------------- >>>
 // Create Review
