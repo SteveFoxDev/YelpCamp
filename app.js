@@ -27,8 +27,9 @@ app.engine('ejs', ejsMate); // parses ejs for partials
 app.set('view engine', 'ejs'); // sets views engine to ejs
 app.set('views', path.join(__dirname, 'views')); 
 
-app.use(express.urlencoded({extended: true}));
-app.use(methodOverride('_method'));
+app.use(express.urlencoded({extended: true}));  //  parses form data
+app.use(methodOverride('_method'));  // Overrides POST method to use put/patch/delete
+app.use(express.static(path.join(__dirname, 'public')));  // Serve a public folder
 
 // ========== ROUTES ==========
 // ============================
