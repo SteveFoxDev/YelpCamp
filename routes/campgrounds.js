@@ -33,6 +33,7 @@ router.get('/new',  (req, res, next) => {
 router.post('/', validateCampground, catchAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
+    req.flash('success', 'Successfully Made A New Campground');
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 
@@ -52,6 +53,7 @@ router.get('/:id/edit', catchAsync(async (req, res, next) => {
 router.put('/:id', validateCampground, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndUpdate(id, {...req.body.campground});
+    req.flash('success', 'Successfully Updated Campground');
     res.redirect(`/campgrounds/${id}`);
 }));
 
@@ -65,6 +67,7 @@ router.get('/:id/delete', catchAsync(async (req, res, next) => {
 router.delete('/:id', catchAsync(async (req, res, next) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
+    req.flash('success', 'Successfully Deleted Campground');
     res.redirect('/campgrounds');
 }));
 

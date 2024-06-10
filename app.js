@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');  // provides utilities for working with file and directory paths
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');  // Allows use of PUT, PATCH, DELETE
+const session = require('express-session');  // Session Cookies
+const flash = require('connect-flash'); // Flash Messages
 const ejsMate = require('ejs-mate');  // Allows Partial EJS Templates
 const ExpressError = require('./utilities/ExpressError');  // Extends Express Error Class
 const campgrounds = require('./routes/campgrounds');
@@ -30,6 +32,25 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));  //  parses form data
 app.use(methodOverride('_method'));  // Overrides POST method to use put/patch/delete
 app.use(express.static(path.join(__dirname, 'public')));  // Serve a public folder
+
+const sessionConfig = {
+    secret: 'ThisShouldBeABetterSecret!',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7 ,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+app.use(session(sessionConfig));  // sets up session cookies
+app.use(flash()); // use flash for messages
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 // ========== ROUTES ==========
 // ============================
