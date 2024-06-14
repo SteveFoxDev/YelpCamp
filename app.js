@@ -6,8 +6,14 @@ const session = require('express-session');  // Session Cookies
 const flash = require('connect-flash'); // Flash Messages
 const ejsMate = require('ejs-mate');  // Allows Partial EJS Templates
 const ExpressError = require('./utilities/ExpressError');  // Extends Express Error Class
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const campgroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
+const passport = require('passport'); // login functionality
+const LocalStrategy = require('passport-local'); // local login
+const User = require('./models/user'); // User Model
+
+
 
 // ========== Mongoose Connection ==========
 // =========================================
@@ -46,11 +52,18 @@ const sessionConfig = {
 app.use(session(sessionConfig));  // sets up session cookies
 app.use(flash()); // use flash for messages
 
+app.use(passport.initialize()); // tells app to use passport
+app.use(passport.session()); // REMINDER: Use AFTER session
+passport.use(new LocalStrategy(User.authenticate())); // tells passport to use local strategy AND that the auth method is located on the user model
+passport.serializeUser(User.serializeUser());  // tells passport how to store on session
+passport.deserializeUser(User.deserializeUser()); // tells passport how to unstore on session
+
 app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 });
+
 
 // ========== ROUTES ==========
 // ============================
@@ -59,9 +72,11 @@ app.get('/',  (req, res, next) => {
     res.render('home');
 });
 // <<< -------------------- Campground Routes ----------------------- >>>
-app.use('/campgrounds', campgrounds)
+app.use('/campgrounds', campgroundRoutes)
 // <<< -------------------- Review Routes ----------------------- >>>
-app.use('/campgrounds/:id/reviews', reviews)
+app.use('/campgrounds/:id/reviews', reviewRoutes)
+// <<< --------------------- USER ROUTES --------------------------- >>>
+app.use('/', userRoutes);
 
 // ========== ERROR HANDLER ==========
 // ===================================
