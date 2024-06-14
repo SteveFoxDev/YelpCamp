@@ -26,8 +26,6 @@ router.post('/register', catchAsync(async (req, res, next) => {
         req.flash('error', 'Email already in Use');
         return res.redirect('/register');
     }
-    
-    
 }));
 
 module.exports = router;
