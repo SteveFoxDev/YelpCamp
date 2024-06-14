@@ -4,7 +4,7 @@ const catchAsync = require('../utilities/catchAsync');
 const ExpressError = require('../utilities/ExpressError');
 const Campground = require('../models/campground');
 const { campgroundSchema } = require('../joiSchemas');
-const { isLoggedIn } = require('../middleware');
+const { isLoggedIn, setReturnTo } = require('../middleware');
 
 // ========== MIDDLEWARE ==========
 // ================================
@@ -39,7 +39,7 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
 }));
 
 // Show
-router.get('/:id', catchAsync(async (req, res, next) => {
+router.get('/:id', setReturnTo, catchAsync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id).populate('reviews');
     if(!campground){
         req.flash('error', 'Cannot Find Campground');
