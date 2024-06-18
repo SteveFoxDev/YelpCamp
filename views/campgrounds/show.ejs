@@ -17,14 +17,19 @@
                     </h6>
                     <blockquote class="blockquote mb-0">
                         <p>Campground submitted by:</p>
-                        <footer class="blockquote-footer"><%= campground.author.username %></footer>
-                      </blockquote>
+                        <footer class="blockquote-footer">
+                            <%= campground.author.username %>
+                        </footer>
+                    </blockquote>
                     <p class="card-text">
                         <%= campground.description %>
                     </p>
                     <p class="card-text">Price: <%= campground.price %>/night</p>
-                    <a class="btn btn-outline-primary" href="/campgrounds/<%= campground._id %>/edit">Edit
-                        Campground</a>
+                    <% if (currentUser && campground.author.equals(currentUser._id)) { %>
+                        <a class="btn btn-outline-primary" href="/campgrounds/<%= campground._id %>/edit">Edit
+                            Campground</a>
+                        <% } %>
+
                 </div>
             </div>
         </div>
@@ -45,10 +50,13 @@
                 <h2>Reviews</h2>
                 <hr>
                 <% for(let review of campground.reviews) { %>
-                    <h6>Rating: <%= review.rating %></h6>
-                    <p> Review: <%= review.body %></p>
+                    <h6>Rating: <%= review.rating %>
+                    </h6>
+                    <p> Review: <%= review.body %>
+                    </p>
                     <hr>
-                    <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                    <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+                        method="POST">
                         <button class="btn btn-sm btn-danger">Delete</button>
                     </form>
                     <% } %>
