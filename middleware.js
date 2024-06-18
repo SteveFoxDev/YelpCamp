@@ -1,4 +1,6 @@
 const Campground = require('./models/campground');
+const Review = require('./models/review');
+const User = require('./models/user');
 const { campgroundSchema, reviewSchema } = require('./joiSchemas');
 const ExpressError  = require('./utilities/catchAsync');
 
@@ -28,12 +30,23 @@ module.exports.setReturnTo = (req, res, next) => {
 module.exports.isAuthor = async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
-    if(!campground.author.equals(req.user.id)) {
+    if(!campground.author.equals(req.user._id)) {
         req.flash('error', 'You do NOT have permission to do that!');
         return res.redirect(`/campgrounds/${id}`);
     }
     next();
 };
+
+// <<< check if review author is same as currently logged in user
+module.exports.isReviewAuthor = async (req, res, next) => {
+    const { id, reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+    if(!review.author.equals(req.user._id)) {
+        req.flash('error', 'You do NOT have permission to do that!');
+        return res.redirect(`/campgrounds/${id}`);
+    }
+    next();
+}
 
 // Validates campground edit and create form data
 module.exports.validateCampground = (req, res, next) => { 
