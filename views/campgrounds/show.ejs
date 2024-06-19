@@ -1,77 +1,100 @@
 <% layout('./layouts/boilerplate') %>
-    <a href="/campgrounds" class="btn btn-primary">Go Back</a>
 
-    <div class="row">
-        <h1 class="text-center display-4">
-            <%= campground.title %>
-        </h1>
-        <div class="col-md-6">
-            <div class="card">
-                <img class="card-img-top" src="<%= campground.image %>" alt="">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <%= campground.title %>
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">
-                        <%= campground.location %>
-                    </h6>
-                    <blockquote class="blockquote mb-0">
-                        <p>Campground submitted by:</p>
-                        <footer class="blockquote-footer">
-                            <%= campground.author.username %>
-                        </footer>
-                    </blockquote>
-                    <p class="card-text">
-                        <%= campground.description %>
-                    </p>
-                    <p class="card-text">Price: <%= campground.price %>/night</p>
-                    <% if (currentUser && campground.author.equals(currentUser._id)) { %>
-                        <a class="btn btn-outline-primary" href="/campgrounds/<%= campground._id %>/edit">Edit
-                            Campground</a>
-                        <% } %>
+    <% block('head').append('<link rel="stylesheet" href="/stylesheets/stars.css">') %>
 
+        <a href="/campgrounds" class="btn btn-primary">Go Back</a>
+
+        <div class="row">
+            <h1 class="text-center display-4">
+                <%= campground.title %>
+            </h1>
+            <div class="col-md-6">
+                <div class="card">
+                    <img class="card-img-top" src="<%= campground.image %>" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <%= campground.title %>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <%= campground.location %>
+                        </h6>
+                        <blockquote class="blockquote mb-0">
+                            <p>Campground submitted by:</p>
+                            <footer class="blockquote-footer">
+                                <%= campground.author.username %>
+                            </footer>
+                        </blockquote>
+                        <p class="card-text">
+                            <%= campground.description %>
+                        </p>
+                        <p class="card-text">Price: <%= campground.price %>/night</p>
+                        <% if (currentUser && campground.author.equals(currentUser._id)) { %>
+                            <a class="btn btn-outline-primary" href="/campgrounds/<%= campground._id %>/edit">Edit
+                                Campground</a>
+                            <% } %>
+
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <% if (currentUser) { %>
-                <a href="#collapseReview" class="btn btn-primary mt-3" data-bs-toggle="collapse">Leave A Review</a>
-            <% } else { %>
-                <a href="/login" class="btn btn-primary my-3">Login</a>
-                <p>Login to Leave A Review</p>
-            <% } %>
+            <div class="col-md-6">
+                <% if (currentUser) { %>
+                    <a href="#collapseReview" class="btn btn-primary mt-3" data-bs-toggle="collapse">Leave A Review</a>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-primary my-3">Login</a>
+                        <p>Login to Leave A Review</p>
+                        <% } %>
 
-            <div class="container collapse shadow py-2 my-3 rounded" id="collapseReview">
-                <h2 class="">Leave A Review</h2>
-                <form class="needs-validation" action="/campgrounds/<%= campground._id %>/reviews"
-                    novalidate method="POST">
-                    <label class="form-label" for="body">Review</label>
-                    <textarea class="form-control" name="review[body]" id="body" required></textarea>
-                    <label for="rating" class="form-label">Rating</label>
-                    <input class="form-range" type="range" min="1" max="5" name="review[rating]" id="rating"
-                        required></input>
-                    <button class="btn btn-primary my-3">Submit</button>
-                </form>
-            </div>
-            <div class="container my-3 p-2 shadow rounded">
-                <h2>Reviews</h2>
-                <hr>
-                <% for(let review of campground.reviews) { %>
-                    <h6>Rating: <%= review.rating %></h6>
-                    <blockquote>
-                        <p>Review: <%= review.body %></p>
-                    </blockquote>
-                     <figcaption class="blockquote-footer">
-                        <%= review.author.username %>
-                     </figcaption>
-                    <% if (currentUser && review.author.equals(currentUser._id)) { %>
-                        <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
-                        method="POST">
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    <% } %>
-                    <hr>
-                <% } %>
+                            <div class="container collapse shadow py-2 my-3 rounded" id="collapseReview">
+                                <h2 class="">Leave A Review</h2>
+                                <form class="needs-validation" action="/campgrounds/<%= campground._id %>/reviews"
+                                    novalidate method="POST">
+
+                                    <fieldset class="starability-basic">
+                                        <input type="radio" id="first-rate1" name="review[rating]" value="1" checked />
+                                        <label for="first-rate1" title="Terrible">1 star</label>
+                                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                                        <label for="first-rate2" title="Not good">2 stars</label>
+                                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                                        <label for="first-rate3" title="Average">3 stars</label>
+                                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                                        <label for="first-rate4" title="Very good">4 stars</label>
+                                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                                        <label for="first-rate5" title="Amazing">5 stars</label>
+                                    </fieldset>
+
+                                    <label class="form-label" for="body">Review</label>
+                                    <textarea class="form-control" name="review[body]" id="body" required></textarea>
+                                    <button class="btn btn-primary my-3">Submit</button>
+                                </form>
+                            </div>
+                            <div class="container my-3 p-2 shadow rounded">
+                                <h2>Reviews</h2>
+                                <hr>
+                                <% if (campground.reviews.length) { %>
+                                    <% for(let review of campground.reviews) { %>
+                                        <p class="starability-result" data-rating="<%= review.rating %>">
+                                            Rated: <%= review.rating %> stars
+                                        </p>
+                                        <blockquote>
+                                            <p>Review: <%= review.body %>
+                                            </p>
+                                        </blockquote>
+                                        <figcaption class="blockquote-footer">
+                                            <%= review.author.username %>
+                                        </figcaption>
+                                        <% if (currentUser && review.author.equals(currentUser._id)) { %>
+                                            <form
+                                                action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+                                                method="POST">
+                                                <button class="btn btn-sm btn-danger">Delete</button>
+                                            </form>
+                                        <% } %>
+                                        <hr>
+                                    <% } %>
+                                <% } else { %>
+                                    <p>No Reviews Yet</p>
+                                <% } %> 
+                                
+                            </div>
             </div>
         </div>
-    </div>
