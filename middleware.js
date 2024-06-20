@@ -2,7 +2,9 @@ const Campground = require('./models/campground');
 const Review = require('./models/review');
 const User = require('./models/user');
 const { campgroundSchema, reviewSchema } = require('./joiSchemas');
-const ExpressError  = require('./utilities/catchAsync');
+const ExpressError = require('./utilities/ExpressError');
+
+
 
 // <<< protects routes where user must be logged in
 module.exports.isLoggedIn = (req, res, next) => {
