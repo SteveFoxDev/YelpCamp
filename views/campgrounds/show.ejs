@@ -1,14 +1,19 @@
 <% layout('./layouts/boilerplate') %>
 
-    <% block('head').append('<link rel="stylesheet" href="/stylesheets/stars.css">') %>
-
-        <a href="/campgrounds" class="btn btn-primary">Go Back</a>
+    <% block('head').append('<link rel="stylesheet" href="/stylesheets/stars.css">')%>
+    <% block('head').append("<script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>") %>
+    <% block('head').append("<link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />") %>
+    <a href="/campgrounds" class="btn btn-primary">Go Back</a>
 
         <div class="row mb-3">
             <h1 class="text-center display-4">
                 <%= campground.title %>
             </h1>
             <div class="col-md-6">
+
+                <!-- <<< ---------------- MAP --------------- >>> -->
+                <div id='map' style='width: 400px; height: 300px;' class="mb-3"></div>
+
                 <!-- <<< -------------  Carousel  Start ------------------- >>>  -->
                 <div id="campgroundCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -119,3 +124,10 @@
                             </div>
             </div>
         </div>
+        <script>
+            const mapBoxToken = '<%- process.env.MAPBOX_TOKEN %>';
+            const campground = '<%-JSON.stringify(campground.geometry.coordinates)%>';
+            const campCoordinates = JSON.parse(campground);
+        </script>
+        <script src="/js/mapBox.js"></script>
+
