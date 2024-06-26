@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
+const opts = { toJSON: { virtuals: true } }; // Pass virtual data through when converted to JSON
 
 
 const ImageSchema = new Schema({
@@ -40,7 +41,7 @@ const CampgroundSchema = new Schema({
             ref: 'Review'
         }
     ]
-});
+}, opts);
 
 CampgroundSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
@@ -50,6 +51,10 @@ CampgroundSchema.post('findOneAndDelete', async function (doc) {
             }
         })
     }
+});
+
+CampgroundSchema.virtual('properties.popUpMarkup').get(function() {
+    return `<a href='/campgrounds/${this._id}'>${this.title}</a><p>${this.location}</p>`;
 });
 
 module.exports = mongoose.model('Campground', CampgroundSchema);
