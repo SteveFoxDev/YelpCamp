@@ -16,6 +16,7 @@ const userRoutes = require('./routes/users');
 const passport = require('passport'); // login functionality
 const LocalStrategy = require('passport-local'); // local login
 const User = require('./models/user'); // User Model
+const mongoSanitize = require('express-mongo-sanitize');
 
 
 // ========== Mongoose Connection ==========
@@ -41,6 +42,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));  //  parses form data
 app.use(methodOverride('_method'));  // Overrides POST method to use put/patch/delete
 app.use(express.static(path.join(__dirname, 'public')));  // Serve a public folder
+app.use(mongoSanitize());
 
 const sessionConfig = {
     secret: 'ThisShouldBeABetterSecret!',
