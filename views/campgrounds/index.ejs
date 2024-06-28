@@ -1,6 +1,6 @@
 <% layout('./layouts/boilerplate') %>
-<% block('head').append("<script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>") %>
-    <% block('head').append("<link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />") %>
+<% block('head').append("<script crossorigin='anonymous' src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>") %>
+    <% block('head').append("<link crossorigin='anonymous' href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />") %>
     <!-- ---------------------- MAP --------------------------------- -->
     <div class="mb-3" id="cluster-map"></div>
     <!-- ---------------------- MAP END ----------------------------- -->
@@ -11,9 +11,9 @@
             <div class="row">
                 <div class="col-md-4">
                     <% if (campground.images.length) { %>
-                        <img src="<%= campground.images[0].url %>" alt="" class="img-fluid">
+                        <img crossorigin='anonymous' src="<%= campground.images[0].url %>" alt="" class="img-fluid">
                     <% } else { %>
-                        <img src="/images/default_Camp.jpg" alt="" class="img-fluid">
+                        <img  src="/images/default_Camp.jpg" alt="" class="img-fluid">
                     <% } %>
                 </div>
                 <div class="col-md-8">

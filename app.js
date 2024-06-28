@@ -17,6 +17,7 @@ const passport = require('passport'); // login functionality
 const LocalStrategy = require('passport-local'); // local login
 const User = require('./models/user'); // User Model
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
 
 
 // ========== Mongoose Connection ==========
@@ -58,6 +59,46 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig));  // sets up session cookies
 app.use(flash()); // use flash for messages
+app.use(helmet()); // 
+
+const scriptSrcUrls = [
+    'https://cdn.jsdelivr.net/',
+    'https://api.mapbox.com/'
+];
+
+const styleSrcUrls = [
+    'https://cdn.jsdelivr.net/',
+    'https://api.mapbox.com/',
+];
+
+const connectSrcUrls = [
+    'https://api.mapbox.com/',
+    'https://events.mapbox.com'
+];
+
+const fontSrcUrls = [];
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/dvxdkiqz8/",
+                "https://images.unslplash.com/"
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls]
+        },
+    })
+);
+
 
 app.use(passport.initialize()); // tells app to use passport
 app.use(passport.session()); // REMINDER: Use AFTER session
