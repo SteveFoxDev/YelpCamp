@@ -9,11 +9,12 @@
             <h1 class="text-center display-4">
                 <%= campground.title %>
             </h1>
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3">
 
                 <!-- <<< ---------------- MAP --------------- >>> -->
-                <div id='map' style='width: 400px; height: 300px;' class="mb-3"></div>
-
+                 <div class="d-flex justify-content-center">
+                    <div id='map' style='max-width: 100%; width: 100em; height: 300px;' class="mb-3"></div>
+                 </div>
                 <!-- <<< -------------  Carousel  Start ------------------- >>>  -->
                 <div id="campgroundCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -72,7 +73,7 @@
                 <% if (currentUser) { %>
                     <a href="#collapseReview" class="btn btn-primary mt-3" data-bs-toggle="collapse">Leave A Review</a>
                     <% } else { %>
-                        <a href="/login" class="btn btn-primary my-3">Login</a>
+                        <a href="/login" class="btn btn-primary mb-3">Login</a>
                         <p>Login to Leave A Review</p>
                         <% } %>
 

@@ -1,5 +1,18 @@
 <% layout('./layouts/boilerplate') %>
-<body>
-    <h1>Home Yelp Camp</h1>
-    <a href="/campgrounds">Check Out Our Campgrounds</a>
-</body>
+<% block('head').append("<link href='/stylesheets/home.css' rel='stylesheet' />") %>
+    <div class="test text-center text-white">
+        <h1 class="mb-3">Yelp Camp</h1>
+        <p class="lead">Jump right in and explore our many campgrounds. <br>
+            Feel free to share some of your own and comment on others!</p>
+        <a href="/campgrounds" class="btn btn-lg btn-secondary mb-3">
+            Check Out Our Campgrounds
+        </a>    
+    </div>
+
+    
+
+    
+    
+
+    
+
