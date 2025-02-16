@@ -7,6 +7,7 @@ const path = require('path');  // provides utilities for working with file and d
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');  // Allows use of PUT, PATCH, DELETE
 const session = require('express-session');  // Session Cookies
+const MongoStore = require('connect-mongo'); // Session Store
 const flash = require('connect-flash'); // Flash Messages
 const ejsMate = require('ejs-mate');  // Allows Partial EJS Templates
 const ExpressError = require('./utilities/ExpressError');  // Extends Express Error Class
@@ -22,7 +23,8 @@ const helmet = require('helmet');
 
 // ========== Mongoose Connection ==========
 // =========================================
-mongoose.connect('mongodb://localhost:27017/newYelp')
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/newYelp";
+mongoose.connect(dbUrl).catch((error) => console.log(error))
     .catch(error => console.log(error));
 
 const db = mongoose.connection;
@@ -45,9 +47,18 @@ app.use(methodOverride('_method'));  // Overrides POST method to use put/patch/d
 app.use(express.static(path.join(__dirname, 'public')));  // Serve a public folder
 app.use(mongoSanitize());
 
+// Save session store to MongoDB
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: process.env.SECRET
+    }
+});
+
 const sessionConfig = {
     name: 'camp_sid',
-    secret: 'ThisShouldBeABetterSecret!',
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
